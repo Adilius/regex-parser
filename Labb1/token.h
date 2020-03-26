@@ -18,8 +18,8 @@ struct token {
 		ID,
 		END_PROGRAM
 	};
-	id id;
-	std::string text;
+	id id = id::ID;
+	std::string text = "";
 };
 
 token next_token(IT& first, IT& last) {
@@ -31,28 +31,28 @@ token next_token(IT& first, IT& last) {
 
 	switch (*first) {
 		case '+':
-			tk = { token::STAR, "+" };
+			tk = { token::PLUS, "+" };
 			break;
 		case '*':
-			tk = { token::STAR, "+" };
+			tk = { token::STAR, "*" };
 			break;
 		case '.':
-			tk = { token::STAR, "+" };
+			tk = { token::DOT, "." };
 			break;
 		case '(':
-			tk = { token::STAR, "+" };
+			tk = { token::LEFT_PARANTHESES, "(" };
 			break;
 		case ')':
-			tk = { token::STAR, "+" };
+			tk = { token::RIGHT_PARENTHESES, ")" };
 			break;
 		case '{':
-			tk = { token::STAR, "+" };
+			tk = { token::LEFT_BRACKET, "{" };
 			break;
 		case '}':
-			tk = { token::STAR, "+" };
+			tk = { token::RIGHT_BRACKET, "}" };
 			break;
 		case '\\':
-			tk = { token::STAR, "+" };
+			tk = { token::BACKSLASH, "\\" };
 			break;
 		default:
 			tk = { token::ID, std::string(first, first + 1) };

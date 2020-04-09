@@ -149,6 +149,16 @@
   <ItemGroup>
     <ClCompile Include="Labb1.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="concatenation.h" />
+    <ClInclude Include="object.h" />
+    <ClInclude Include="op.h" />
+    <ClInclude Include="plus.h" />
+    <ClInclude Include="re.h" />
+    <ClInclude Include="simple_re.h" />
+    <ClInclude Include="substitute.h" />
+    <ClInclude Include="token.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

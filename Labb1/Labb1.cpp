@@ -1,6 +1,17 @@
 #include <iostream>
 #include <string>
 
+#include "op.h"
+#include "token.h"
+#include "object.h"
+#include "plus.h"
+#include "re.h"
+#include "substitute.h"
+#include "concatenation.h"
+#include "simple_re.h"
+#include "basic_re.h"
+#include "elementary_re.h"
+
 //https://stackoverflow.com/questions/265457/regex-grammar
 /* BNF Grammar of Regular Expressions
 <program_parse>     ::=     <RE>
@@ -31,6 +42,184 @@
 */
 
 using IT = std::string::iterator;
+
+op* program_parse(IT& first, IT& last);
+
+//<program_parse>     ::=     <RE>
+op* regExp(IT& first, IT& last);
+
+//<RE>                ::=     <substitute> | <simple-RE>
+op* substitute_expr(IT& first, IT& last); //TODO
+op* simple_re_expr(IT& first, IT& last);
+
+//<simple-RE>         ::=     <concatenation> | <basic-RE>
+op* concatenation_expr(IT& first, IT& last);	//TODO
+op* basic_re_expr(IT& first, IT& last);
+
+//<basic-RE>          ::=     <star> | <count> | <lowercase> | <capturegroup> | <elementary-RE>
+op* star_expr(IT& first, IT& last);	//TODO
+op* counter_expr(IT& first, IT& last);	//TODO
+op* lowercase_expr(IT& first, IT& last);	//TODO
+op* capturegroup_expr(IT& first, IT& last);	//TODO
+op* elementary_re_expr(IT& first, IT& last);	//TODO
+
+//<elementary-RE>     ::=     <character> | <group> | <any>
+op* character_expr(IT& first, IT& last);	//TODO
+op* group_expr(IT& first, IT& last);	//TODO
+op* any_expr(IT& first, IT& last);	//TODO
+
+op* digit_expr(IT& first, IT& last);	//TODO
+
+//TODO
+op* program_parse(IT& first, IT& last) {
+	//If the string is empty
+	if (*first == *last) {
+		return nullptr;
+	}
+
+	op* re = regExp(first, last);
+	program* expr = new program;
+	expr->operands.push_back(re);
+	return expr;
+}
+
+op* regExp(IT& first, IT& last) {
+	//If the string is empty
+	if (*first == *last) {
+		return nullptr;
+	}
+
+	//TODO substitute rule
+	//op* substitute_or_simple = substitute_expr(first, last);
+	op* substitute_or_simple = NULL;
+
+	//Check if substitute or simple
+	if (!substitute_or_simple) {
+		substitute_or_simple = simple_re_expr(first, last);
+	}
+
+	re* expr = new re;
+	expr->operands.push_back(substitute_or_simple);
+	return expr;
+}
+
+//TODO
+op* substitute_expr(IT& first, IT& last) {
+	op* expr;
+	return expr;
+}
+
+op* simple_re_expr(IT& first, IT& last) {
+	//Save iterator pointing at first
+	IT start = first;
+
+	//TODO
+	//op* concatenation_or_basic = concatenation_expr(first, last);
+	op* concatenation_or_basic = nullptr;
+
+	//Check if basic_re
+	if (!concatenation_or_basic) {
+		concatenation_or_basic = basic_re_expr(first, last);
+
+		//Check if neither
+		if (!concatenation_or_basic) {
+			//Assign first to old value again
+			first = start;
+			return nullptr;
+		}
+	}
+
+	simple_re* expr = new simple_re;
+	expr->operands.push_back(concatenation_or_basic);
+	return expr;
+}
+
+//TODO
+op* concatenation_expr(IT& first, IT& last) {
+	op* expr;
+	return expr;
+}
+
+op* basic_re_expr(IT& first, IT& last) {
+	//Save iterator pointing at first
+	IT start = first;
+
+	op* basic = nullptr;	//basic = star | count | lowercase | capturegroup | elementary_re
+	//if (!basic) { basic = star_expr(first, last); }			//TODO
+	//if (!basic) { basic = counter_expr(first, last); }		//TODO
+	//if (!basic) { basic = lowercase_expr(first, last); }		//TODO
+	//if (!basic) { basic = capturegroup_expr(first, last); }	//TODO
+	if (!basic) { basic = elementary_re_expr(first, last); }
+	if (!basic) { first = start; return nullptr; }	//Failed to find basic_re
+
+	basic_re* expr = new basic_re;
+	expr->operands.push_back(basic);
+	return expr;
+}
+
+//TODO
+op* star_expr(IT& first, IT& last) {
+	op* expr;
+	return expr;
+}
+
+//TODO
+op* counter_expr(IT& first, IT& last) {
+	op* expr;
+	return expr;
+};
+
+//TODO
+op* lowercase_expr(IT& first, IT& last) {
+	op* expr;
+	return expr;
+};
+
+//TODO
+op* capturegroup_expr(IT& first, IT& last) {
+	op* expr;
+	return expr;
+};
+
+op* elementary_re_expr(IT& first, IT& last) {
+	//Save iterator pointing at first
+	IT start = first;
+
+	op* elementary = nullptr;
+	if (!elementary) { elementary = character_expr(first, last); }
+	//if (!elementary) { elementary = group_expr(first, last); }	//TODO
+	//if (!elementary) { elementary = any_expr(first, last); }		//TODO
+	if (!elementary) { first = start; return nullptr; }	//Failed to find elementary_re
+
+	elementary_re* expr = new elementary_re;
+	expr->operands.push_back(elementary);
+	return expr;
+};
+
+op* character_expr(IT& first, IT& last) {
+	//Save iterator pointing at first
+	IT start = first;
+
+	//Get token
+	token token = next_token(first, last);
+	character* expr = new character;
+
+	return expr;
+};
+
+//TODO
+op* group_expr(IT& first, IT& last) {
+	op* expr;
+	return expr;
+};
+
+//TODO
+op* any_expr(IT& first, IT& last) {
+	op* expr;
+	return expr;
+};
+
+
 
 int main()
 {

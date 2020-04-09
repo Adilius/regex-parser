@@ -1,5 +1,6 @@
 #ifndef OBJECT_H
 #define OBJECT_H
+
 #include <string>
 #include <vector>
 
@@ -14,7 +15,7 @@ struct object {
 	IT lhs;
 	IT rhs;
 	IT end;
-	bool lowerCase = false;
+	bool lowercase = false;
 	size_t captured = 0;
 	std::vector<iter> cap;
 };

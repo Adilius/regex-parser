@@ -1,16 +1,16 @@
-#ifndef PLUS_H
-#define PLUS_H
+#ifndef ELEMENTARY_RE_H
+#define ELEMENTARY_RE_H
 
-#include <string>
-#include <vector>
 #include "op.h"
+#include "object.h"
 
-struct plus :op {
+struct elementary_re : op {
 	object* eval(object* obj) override {
 		return operands[0]->eval(obj);
 	}
+
 	std::string id() override {
-		return "plus";
+		return "elementary_re";
 	}
 };
 

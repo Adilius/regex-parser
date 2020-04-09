@@ -1,5 +1,8 @@
 #ifndef OP_H
 #define OP_H
+
+#include <string>
+#include <vector>
 #include "object.h"
 
 struct op {

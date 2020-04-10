@@ -234,5 +234,5 @@ int main()
 	IT begin = input.begin();
 	IT end = input.end();
 
-    std::cout << "Hello World!\n";
+	std::cout << "Hello World!" << std::endl;
 }

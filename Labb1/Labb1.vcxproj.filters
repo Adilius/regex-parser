@@ -44,5 +44,17 @@
     <ClInclude Include="simple_re.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="basic_re.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="elementary_re.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="character.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="program.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

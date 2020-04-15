@@ -1,6 +1,3 @@
-#include <iostream>
-#include <string>
-
 #include "op.h"
 #include "token.h"
 #include "object.h"
@@ -12,6 +9,10 @@
 #include "basic_re.h"
 #include "elementary_re.h"
 #include "character.h"
+#include "program.h"
+
+#include <iostream>
+#include <string>
 
 //https://stackoverflow.com/questions/265457/regex-grammar
 /* BNF Grammar of Regular Expressions
@@ -74,10 +75,9 @@ op* digit_expr(IT& first, IT& last);	//TODO
 //TODO
 op* program_parse(IT& first, IT& last) {
 	//If the string is empty
-	if (*first == *last) {
+	if (first == last) {
 		return nullptr;
 	}
-
 	op* re = regExp(first, last);
 	program* expr = new program;
 	expr->operands.push_back(re);
@@ -106,8 +106,7 @@ op* regExp(IT& first, IT& last) {
 
 //TODO
 op* substitute_expr(IT& first, IT& last) {
-	op* expr;
-	return expr;
+	return nullptr;
 }
 
 op* simple_re_expr(IT& first, IT& last) {
@@ -137,8 +136,7 @@ op* simple_re_expr(IT& first, IT& last) {
 
 //TODO
 op* concatenation_expr(IT& first, IT& last) {
-	op* expr;
-	return expr;
+	return nullptr;
 }
 
 op* basic_re_expr(IT& first, IT& last) {
@@ -160,26 +158,22 @@ op* basic_re_expr(IT& first, IT& last) {
 
 //TODO
 op* star_expr(IT& first, IT& last) {
-	op* expr;
-	return expr;
+	return nullptr;
 }
 
 //TODO
 op* counter_expr(IT& first, IT& last) {
-	op* expr;
-	return expr;
+	return nullptr;
 };
 
 //TODO
 op* lowercase_expr(IT& first, IT& last) {
-	op* expr;
-	return expr;
+	return nullptr;
 };
 
 //TODO
 op* capturegroup_expr(IT& first, IT& last) {
-	op* expr;
-	return expr;
+	return nullptr;
 };
 
 op* elementary_re_expr(IT& first, IT& last) {
@@ -206,7 +200,7 @@ op* character_expr(IT& first, IT& last) {
 	character* expr = new character;
 
 	while (token.id == token.ID) {
-		expr->id += token.text;
+		expr->_id += token.text;
 		first++;
 		token = next_token(first, last);
 	}
@@ -220,30 +214,38 @@ op* character_expr(IT& first, IT& last) {
 
 //TODO
 op* group_expr(IT& first, IT& last) {
-	op* expr;
-	return expr;
+	return nullptr;
 };
 
 //TODO
 op* any_expr(IT& first, IT& last) {
-	op* expr;
-	return expr;
+	return nullptr;
 };
 
+//TODO
+op* digit_expr(IT& first, IT& last) {
+	return nullptr;
+}
+
+void print(op* op) {
+	std::cout<<op->id()<<std::endl;
+	for (auto e : op->operands) {
+		print(e);
+	}
+}
 
 
-int main()
-{
-    std::string source ="Waterloo I was defeated, you won the war"
-						"Waterloo promise to love you for ever more"
-						"Waterloo couldn't escape if I wanted to"
-						"Waterloo knowing my fate is to be with you"
-						"Waterloo finally facing my Waterloo";
-    std::string input = "o+o";
+int main(){
+
+    std::string source ="Waterloo I was defeated, you won the war Waterloo promise to love you for ever more Waterloo couldn't escape if I wanted to Waterloo knowing my fate is to be with you Waterloo finally facing my Waterloo";
+    std::string input = "oo";
 
 	//Get iterators to begin and end
 	IT begin = input.begin();
 	IT end = input.end();
+
+	op* result = program_parse(begin, end);
+	print(result);
 
 	std::cout << "Hello World!" << std::endl;
 }

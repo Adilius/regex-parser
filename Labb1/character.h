@@ -10,12 +10,13 @@ struct character : op {
 
 	object* eval(object* obj) override {
 		if (obj->lowercase) { std::transform(_id.begin(), _id.end(), _id.begin(), ::tolower); }
-		for (int i = 0; i < _id.size(); i++) {
+		for (size_t i = 0; i < _id.size(); i++) {
 			if (*(obj->rhs + i) != *(_id.begin() + i)) {
 				return nullptr;
 			}
 		}
 		obj->cap.push_back({ obj->rhs , obj->rhs += _id.size() });
+		return obj;
 
 	}
 

@@ -11,6 +11,7 @@
 #include "simple_re.h"
 #include "basic_re.h"
 #include "elementary_re.h"
+#include "character.h"
 
 //https://stackoverflow.com/questions/265457/regex-grammar
 /* BNF Grammar of Regular Expressions
@@ -61,7 +62,7 @@ op* star_expr(IT& first, IT& last);	//TODO
 op* counter_expr(IT& first, IT& last);	//TODO
 op* lowercase_expr(IT& first, IT& last);	//TODO
 op* capturegroup_expr(IT& first, IT& last);	//TODO
-op* elementary_re_expr(IT& first, IT& last);	//TODO
+op* elementary_re_expr(IT& first, IT& last);
 
 //<elementary-RE>     ::=     <character> | <group> | <any>
 op* character_expr(IT& first, IT& last);	//TODO
@@ -203,6 +204,16 @@ op* character_expr(IT& first, IT& last) {
 	//Get token
 	token token = next_token(first, last);
 	character* expr = new character;
+
+	while (token.id == token.ID) {
+		expr->id += token.text;
+		first++;
+		token = next_token(first, last);
+	}
+	//If we didn't find any characters
+	if (start == first) {
+		return nullptr;
+	}
 
 	return expr;
 };

@@ -72,6 +72,12 @@ op* any_expr(IT& first, IT& last);	//TODO
 
 op* digit_expr(IT& first, IT& last);	//TODO
 
+//Prints parse tree
+void print(op* op, size_t i = 0);
+
+//Runs parse tree
+void execute(op* parse_tree, std::string source);
+
 //TODO
 op* program_parse(IT& first, IT& last) {
 	//If the string is empty
@@ -85,11 +91,6 @@ op* program_parse(IT& first, IT& last) {
 }
 
 op* regExp(IT& first, IT& last) {
-	//If the string is empty
-	if (*first == *last) {
-		return nullptr;
-	}
-
 	//TODO substitute rule
 	//op* substitute_or_simple = substitute_expr(first, last);
 	op* substitute_or_simple = NULL;
@@ -148,8 +149,16 @@ op* basic_re_expr(IT& first, IT& last) {
 	//if (!basic) { basic = counter_expr(first, last); }		//TODO
 	//if (!basic) { basic = lowercase_expr(first, last); }		//TODO
 	//if (!basic) { basic = capturegroup_expr(first, last); }	//TODO
-	if (!basic) { basic = elementary_re_expr(first, last); }
-	if (!basic) { first = start; return nullptr; }	//Failed to find basic_re
+
+	//If basic-RE is an elementary-RE
+	if (!basic){
+		basic = elementary_re_expr(first, last);
+	}
+
+	//If failed to find basic-RE
+	if (!basic) {
+		first = start; return nullptr;
+	}
 
 	basic_re* expr = new basic_re;
 	expr->operands.push_back(basic);
@@ -181,10 +190,19 @@ op* elementary_re_expr(IT& first, IT& last) {
 	IT start = first;
 
 	op* elementary = nullptr;
-	if (!elementary) { elementary = character_expr(first, last); }
+
+	//Check if elementary-RE is character
+	if (!elementary){
+		elementary = character_expr(first, last);
+	}
 	//if (!elementary) { elementary = group_expr(first, last); }	//TODO
 	//if (!elementary) { elementary = any_expr(first, last); }		//TODO
-	if (!elementary) { first = start; return nullptr; }	//Failed to find elementary_re
+
+	//If failed to find elementary_re
+	if (!elementary) {
+		first = start; 
+		return nullptr;
+	}
 
 	elementary_re* expr = new elementary_re;
 	expr->operands.push_back(elementary);
@@ -227,25 +245,58 @@ op* digit_expr(IT& first, IT& last) {
 	return nullptr;
 }
 
-void print(op* op) {
-	std::cout<<op->id()<<std::endl;
+//Print parse tree
+void print(op* op, size_t i) {
+	i++;
+	for (size_t j = 0; j < i; j++) {
+		std::cout << " |";
+	}
+
+	//Print class name
+	std::cout << op->id() << std::endl;
+
+	//Iterate into class operands
 	for (auto e : op->operands) {
-		print(e);
+		print(e, i);
+	}
+}
+
+//Executes parse tree
+void execute(op* parse_tree, std::string source) {
+	object* obj = new object;
+	obj->lhs = source.begin();
+	obj->rhs = source.begin();
+	obj->end = source.end();
+
+	object* parse = parse_tree->eval(obj);
+
+	if (parse != nullptr) {
+		for (; parse->lhs != parse->rhs; parse->lhs++) {
+			std::cout << *parse->lhs;
+		}
+	}
+	else {
+		std::cerr << "EXIT FAILURE." << std::endl;
 	}
 }
 
 
-int main(){
+int main() {
 
-    std::string source ="Waterloo I was defeated, you won the war Waterloo promise to love you for ever more Waterloo couldn't escape if I wanted to Waterloo knowing my fate is to be with you Waterloo finally facing my Waterloo";
-    std::string input = "oo";
+	//std::string source = "Waterloo I was defeated, you won the war Waterloo promise to love you for ever more Waterloo couldn't escape if I wanted to Waterloo knowing my fate is to be with you Waterloo finally facing my Waterloo";
+	std::string source = "Waterloo";
+	std::string input = "loo";
 
 	//Get iterators to begin and end
 	IT begin = input.begin();
 	IT end = input.end();
 
 	op* result = program_parse(begin, end);
+
+	std::cout << "Print parse tree:" << std::endl;
 	print(result);
 
-	std::cout << "Hello World!" << std::endl;
+	std::cout << "Execute parse tree:" << std::endl;
+	execute(result, source);
+
 }

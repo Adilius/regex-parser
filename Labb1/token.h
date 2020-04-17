@@ -9,7 +9,7 @@ struct token {
 	enum id {
 		PLUS,
 		STAR,
-		DOT,
+		ANY,
 		LEFT_PARANTHESES,
 		RIGHT_PARENTHESES,
 		LEFT_BRACKET,
@@ -37,7 +37,7 @@ token next_token(IT& first, IT& last) {
 			tk = { token::STAR, "*" };
 			break;
 		case '.':
-			tk = { token::DOT, "." };
+			tk = { token::ANY, "." };
 			break;
 		case '(':
 			tk = { token::LEFT_PARANTHESES, "(" };

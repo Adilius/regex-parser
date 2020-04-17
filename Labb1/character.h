@@ -1,7 +1,7 @@
 #ifndef CHARACTER_H
 #define CHARACTER_H
 
-#include <algorithm>
+#include <algorithm>	//std::transform
 #include "op.h"
 #include "object.h"
 

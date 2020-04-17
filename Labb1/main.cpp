@@ -10,6 +10,7 @@
 #include "elementary_re.h"
 #include "character.h"
 #include "program.h"
+#include "any.h"
 
 #include <iostream>
 #include <string>
@@ -113,18 +114,17 @@ op* simple_re_expr(IT& first, IT& last) {
 	//Save iterator pointing at first
 	IT start = first;
 
-	//TODO
 	//Check if concatenation
-	//op* concatenation_or_basic = concatenation_expr(first, last);
-	op* concatenation_or_basic = nullptr;
+	op* concatenation_or_basic = concatenation_expr(first, last);
 
 	//Check if basic_re
 	if (!concatenation_or_basic) {
 		concatenation_or_basic = basic_re_expr(first, last);
 	}
 
-	//Check if neither
+	//If neither
 	if (!concatenation_or_basic) {
+		first = start;
 		return nullptr;
 	}
 
@@ -135,6 +135,26 @@ op* simple_re_expr(IT& first, IT& last) {
 
 //TODO
 op* concatenation_expr(IT& first, IT& last) {
+	//Save iterator pointing at first
+	IT start = first;
+
+	op* basic_re_op = basic_re_expr(first, last);
+	//If first operand is not <basic-RE>
+	if (!basic_re_op) {
+		first = start;
+		return nullptr;
+	}
+
+	op* simple_re_op = simple_re_expr(first, last);
+	//If second operand is not <simple-RE>
+	if (!simple_re_op) {
+		first = start;
+		return nullptr;
+	}
+
+	concatenation* expr = new concatenation;
+	expr->operands.push_back(basic_re_op);
+	expr->operands.push_back(simple_re_op);
 	return nullptr;
 }
 
@@ -155,7 +175,8 @@ op* basic_re_expr(IT& first, IT& last) {
 
 	//If failed to find basic-RE
 	if (!basic) {
-		first = start; return nullptr;
+		first = start; 
+		return nullptr;
 	}
 
 	basic_re* expr = new basic_re;
@@ -224,7 +245,8 @@ op* character_expr(IT& first, IT& last) {
 		first++;
 		char_token = next_token(first, last);
 	}
-	//If we didn't find any characters
+
+	//If we didn't find any characters, return nullptr
 	if (start == first) {
 		return nullptr;
 	}
@@ -239,12 +261,17 @@ op* group_expr(IT& first, IT& last) {
 
 
 op* any_expr(IT& first, IT& last) {
-	//Save iterator pointing at first
-	IT start = first;
-
 	//Get token
 	token any_token = next_token(first, last);
 
+	//If token is <any>
+	if(any_token.id == token::ANY){
+		first++;
+		any* expr = new any;
+		return expr;
+	}
+
+	//If token is not <any>
 	return nullptr;
 };
 
@@ -293,7 +320,7 @@ int main() {
 
 	//std::string source = "Waterloo I was defeated, you won the war Waterloo promise to love you for ever more Waterloo couldn't escape if I wanted to Waterloo knowing my fate is to be with you Waterloo finally facing my Waterloo";
 	std::string source = "Waterloo WATAH waterlooooo";
-	std::string input = "loo";
+	std::string input = "o.";
 
 	//Get iterators to begin and end
 	IT begin = input.begin();
@@ -311,8 +338,9 @@ int main() {
 	print(result);
 	std::cout << std::endl;
 
+	/*
 	std::cout << "Result of executed regex:" << std::endl;
 	execute(result, source);
 	std::cout << std::endl;
-
+	*/
 }

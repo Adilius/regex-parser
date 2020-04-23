@@ -80,12 +80,12 @@ void print(op* op, size_t i = 0);
 void execute(op* parse_tree, std::string source);
 
 op* program_parse(IT& first, IT& last) {
-	//If the string is empty
+	//If the regex is empty
 	if (first == last) {
 		return nullptr;
 	}
-	op* re = regExp(first, last);
 	program* expr = new program;
+	op* re = regExp(first, last);
 	expr->operands.push_back(re);
 	return expr;
 }
@@ -114,16 +114,18 @@ op* simple_re_expr(IT& first, IT& last) {
 	//Save iterator pointing at first
 	IT start = first;
 
-	//Check if concatenation
-	op* concatenation_or_basic = concatenation_expr(first, last);
+	//Check if basic-RE first
+	op* concatenation_or_basic = basic_re_expr(first, last);
 
-	//Check if basic_re
+	//Check if concatenation
 	if (!concatenation_or_basic) {
-		concatenation_or_basic = basic_re_expr(first, last);
+		std::cout << "Checking if concat" << std::endl;
+		concatenation_or_basic = concatenation_expr(first, last);
 	}
 
 	//If neither
 	if (!concatenation_or_basic) {
+		std::cout << "Neither basic or concat" << std::endl;
 		first = start;
 		return nullptr;
 	}
@@ -240,14 +242,41 @@ op* character_expr(IT& first, IT& last) {
 	token char_token = next_token(first, last);
 	character* expr = new character;
 
-	while (char_token.id == char_token.ID) {
-		expr->_id += char_token.text;
+	//If character is backslash, we check if following character is a metacharacter
+	if (char_token.id == char_token.BACKSLASH) {
+		//Move to next character
 		first++;
+
+		//If next character is END PROGRAM
+		if (first == last) {
+			return nullptr;
+		}
+
+		//Get token of next character
+		//If token is ID, i.e not a metacharacter
 		char_token = next_token(first, last);
+		if (char_token.id == char_token.ID) {
+			return nullptr;
+		}
+
+		//Set character _id text to metacharacter
+		expr->_id = char_token.text;
+		first++;
 	}
 
-	//If we didn't find any characters, return nullptr
+	//If character is just a non metacharacter, i.e ID
+	if (char_token.id == char_token.ID) {
+		expr->_id = char_token.text;
+		first++;
+	}
+
+	//If we didn't find any non characters OR backslash metacharacter, return nullptr
 	if (start == first) {
+		return nullptr;
+	}
+
+	//If we are not done with the regex
+	if (first != last) {
 		return nullptr;
 	}
 
@@ -282,6 +311,8 @@ op* digit_expr(IT& first, IT& last) {
 
 //Print parse tree
 void print(op* op, size_t i) {
+
+	//Prints space for indentation
 	i++;
 	for (size_t j = 0; j < i; j++) {
 		std::cout << " |";
@@ -291,8 +322,8 @@ void print(op* op, size_t i) {
 	std::cout << op->id() << std::endl;
 
 	//Iterate into class operands
-	for (auto e : op->operands) {
-		print(e, i);
+	for (size_t o = 0; o < op->operands.size(); o++) {
+		print(op->operands[o], i);
 	}
 }
 
@@ -319,8 +350,8 @@ void execute(op* parse_tree, std::string source) {
 int main() {
 
 	//std::string source = "Waterloo I was defeated, you won the war Waterloo promise to love you for ever more Waterloo couldn't escape if I wanted to Waterloo knowing my fate is to be with you Waterloo finally facing my Waterloo";
-	std::string source = "Waterloo WATAH waterlooooo";
-	std::string input = "o.";
+	std::string source = "Waterloo WATAH waterlooooo*";
+	std::string input = "oo";
 
 	//Get iterators to begin and end
 	IT begin = input.begin();
@@ -343,4 +374,5 @@ int main() {
 	execute(result, source);
 	std::cout << std::endl;
 	*/
+	
 }

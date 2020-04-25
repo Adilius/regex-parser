@@ -114,31 +114,38 @@ op* simple_re_expr(IT& first, IT& last) {
 	//Save iterator pointing at first
 	IT start = first;
 
-	//Check if basic-RE first
-	op* concatenation_or_basic = basic_re_expr(first, last);
+	//Create child node
+	op* simple_re_child = nullptr;
 
-	//Check if concatenation
-	if (!concatenation_or_basic) {
+	//Check if basic-RE first
+	simple_re_child = basic_re_expr(first, last);
+
+	//If <basic-RE> did not enclose the whole expression
+	//Try for <concatenation>
+	if (first != last) {
 		std::cout << "Checking if concat" << std::endl;
-		concatenation_or_basic = concatenation_expr(first, last);
+		first = start;
+		simple_re_child = concatenation_expr(first, last);
 	}
 
 	//If neither
-	if (!concatenation_or_basic) {
+	if (!simple_re_child) {
 		std::cout << "Neither basic or concat" << std::endl;
 		first = start;
 		return nullptr;
 	}
 
 	simple_re* expr = new simple_re;
-	expr->operands.push_back(concatenation_or_basic);
+	expr->operands.push_back(simple_re_child);
 	return expr;
 }
 
-//TODO
 op* concatenation_expr(IT& first, IT& last) {
 	//Save iterator pointing at first
 	IT start = first;
+
+	//Create <concatenation> child node
+	op* concatenation_child = nullptr;
 
 	op* basic_re_op = basic_re_expr(first, last);
 	//If first operand is not <basic-RE>
@@ -164,25 +171,25 @@ op* basic_re_expr(IT& first, IT& last) {
 	//Save iterator pointing at first
 	IT start = first;
 
-	op* basic = nullptr;	//basic = star | count | lowercase | capturegroup | elementary_re
+	op* basic_re_child = nullptr;	//basic = star | count | lowercase | capturegroup | elementary_re
 	//if (!basic) { basic = star_expr(first, last); }			//TODO
 	//if (!basic) { basic = counter_expr(first, last); }		//TODO
 	//if (!basic) { basic = lowercase_expr(first, last); }		//TODO
 	//if (!basic) { basic = capturegroup_expr(first, last); }	//TODO
 
-	//If basic-RE is an elementary-RE
-	if (!basic){
-		basic = elementary_re_expr(first, last);
+	//Check <basic-RE> is an <elementary-RE>
+	if (!basic_re_child){
+		basic_re_child = elementary_re_expr(first, last);
 	}
 
 	//If failed to find basic-RE
-	if (!basic) {
+	if (!basic_re_child) {
 		first = start; 
 		return nullptr;
 	}
 
 	basic_re* expr = new basic_re;
-	expr->operands.push_back(basic);
+	expr->operands.push_back(basic_re_child);
 	return expr;
 }
 
@@ -210,27 +217,33 @@ op* elementary_re_expr(IT& first, IT& last) {
 	//Save iterator pointing at first
 	IT start = first;
 
-	op* elementary = nullptr;
+	//Create <elementary-RE> child node
+	op* elementary_re_child = nullptr;
 
 	//Check if <elementary-RE> is <character>
-	if (!elementary){
-		elementary = character_expr(first, last);
+	if (!elementary_re_child){
+		elementary_re_child = character_expr(first, last);
 	}
-	//if (!elementary) { elementary = group_expr(first, last); }	//TODO
 
 	//Check if <elementary-RE> is <any>
-	if (!elementary){
-		elementary = any_expr(first, last);
+	if (!elementary_re_child) {
+		elementary_re_child = any_expr(first, last);
 	}
 
+	//TODO Check if <elementary-RE> is <group>
+	/*if (!elementary){ 
+		elementary = group_expr(first, last);
+	}	
+	*/
+
 	//If failed to find elementary_re
-	if (!elementary) {
+	if (!elementary_re_child) {
 		first = start; 
 		return nullptr;
 	}
 
 	elementary_re* expr = new elementary_re;
-	expr->operands.push_back(elementary);
+	expr->operands.push_back(elementary_re_child);
 	return expr;
 };
 
@@ -242,41 +255,15 @@ op* character_expr(IT& first, IT& last) {
 	token char_token = next_token(first, last);
 	character* expr = new character;
 
-	//If character is backslash, we check if following character is a metacharacter
-	if (char_token.id == char_token.BACKSLASH) {
-		//Move to next character
+	//If character is a non metacharacter, append the text to <character> node and check next character
+	while(char_token.id == token::ID) {
+		expr->_id.append(char_token.text);
 		first++;
-
-		//If next character is END PROGRAM
-		if (first == last) {
-			return nullptr;
-		}
-
-		//Get token of next character
-		//If token is ID, i.e not a metacharacter
 		char_token = next_token(first, last);
-		if (char_token.id == char_token.ID) {
-			return nullptr;
-		}
-
-		//Set character _id text to metacharacter
-		expr->_id = char_token.text;
-		first++;
 	}
 
-	//If character is just a non metacharacter, i.e ID
-	if (char_token.id == char_token.ID) {
-		expr->_id = char_token.text;
-		first++;
-	}
-
-	//If we didn't find any non characters OR backslash metacharacter, return nullptr
+	//If we did not find any characters
 	if (start == first) {
-		return nullptr;
-	}
-
-	//If we are not done with the regex
-	if (first != last) {
 		return nullptr;
 	}
 
@@ -349,9 +336,8 @@ void execute(op* parse_tree, std::string source) {
 
 int main() {
 
-	//std::string source = "Waterloo I was defeated, you won the war Waterloo promise to love you for ever more Waterloo couldn't escape if I wanted to Waterloo knowing my fate is to be with you Waterloo finally facing my Waterloo";
-	std::string source = "Waterloo WATAH waterlooooo*";
-	std::string input = "oo";
+	std::string source = "Waterloo I was defeated, you won the war Waterloo promise to love you for ever more Waterloo couldn't escape if I wanted to Waterloo knowing my fate is to be with you Waterloo finally facing my Waterloo";
+	std::string input = "o.";
 
 	//Get iterators to begin and end
 	IT begin = input.begin();

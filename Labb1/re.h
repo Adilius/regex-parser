@@ -19,7 +19,7 @@ struct re : op {
 	}
 
 	std::string id() override {
-		return "re";
+		return "<RE>";
 	}
 };
 

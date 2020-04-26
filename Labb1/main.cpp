@@ -1,7 +1,6 @@
 #include "op.h"
 #include "token.h"
 #include "object.h"
-#include "plus.h"
 #include "re.h"
 #include "substitute.h"
 #include "concatenation.h"
@@ -164,7 +163,7 @@ op* concatenation_expr(IT& first, IT& last) {
 	concatenation* expr = new concatenation;
 	expr->operands.push_back(basic_re_op);
 	expr->operands.push_back(simple_re_op);
-	return nullptr;
+	return expr;
 }
 
 op* basic_re_expr(IT& first, IT& last) {
@@ -306,11 +305,11 @@ void print(op* op, size_t i) {
 	}
 
 	//Print class name
-	std::cout << op->id() << std::endl;
+	std::cout << op->id() << " " << op->operands.size() << std::endl;
 
 	//Iterate into class operands
-	for (size_t o = 0; o < op->operands.size(); o++) {
-		print(op->operands[o], i);
+	for (size_t childNode = 0; childNode < op->operands.size(); childNode++) {
+		print(op->operands[childNode], i);
 	}
 }
 

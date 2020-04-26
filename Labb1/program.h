@@ -17,7 +17,7 @@ struct program : op {
 	}
 
 	std::string id() override {
-		return "program";
+		return "<program parse>";
 	}
 };
 

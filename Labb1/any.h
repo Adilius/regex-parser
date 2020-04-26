@@ -16,7 +16,7 @@ struct any : op {
 	}
 
 	std::string id() override {
-		return "any";
+		return "<any>";
 	}
 };
 

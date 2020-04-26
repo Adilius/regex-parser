@@ -53,7 +53,7 @@ struct concatenation : op {
 	}
 
 	std::string id() override {
-		return "concatenation";
+		return "<concatenation>";
 	}
 };
 

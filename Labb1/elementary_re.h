@@ -10,7 +10,7 @@ struct elementary_re : op {
 	}
 
 	std::string id() override {
-		return "elementary_re";
+		return "<elementary-RE>";
 	}
 };
 

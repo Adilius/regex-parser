@@ -24,9 +24,6 @@
     <ClInclude Include="op.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="plus.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="re.h">
       <Filter>Header Files</Filter>
     </ClInclude>

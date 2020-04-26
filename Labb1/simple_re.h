@@ -10,7 +10,7 @@ struct simple_re : op {
 	}
 
 	std::string id() override {
-		return "simple_re";
+		return "<simple-RE>";
 	}
 };
 

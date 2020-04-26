@@ -158,7 +158,6 @@
     <ClInclude Include="elementary_re.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="op.h" />
-    <ClInclude Include="plus.h" />
     <ClInclude Include="program.h" />
     <ClInclude Include="re.h" />
     <ClInclude Include="simple_re.h" />

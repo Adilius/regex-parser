@@ -33,7 +33,7 @@ struct character : op {
 	}
 
 	std::string id() override {
-		return "character(" + this->_id + ")";
+		return "<character>(" + this->_id + ")";
 	}
 };
 

@@ -10,6 +10,7 @@
 #include "character.h"
 #include "program.h"
 #include "any.h"
+#include "group.h"
 
 #include <iostream>
 #include <string>
@@ -66,8 +67,8 @@ op* capturegroup_expr(IT& first, IT& last);	//TODO
 op* elementary_re_expr(IT& first, IT& last);
 
 //<elementary-RE>     ::=     <character> | <group> | <any>
-op* character_expr(IT& first, IT& last);	//TODO
-op* group_expr(IT& first, IT& last);	//TODO
+op* character_expr(IT& first, IT& last);
+op* group_expr(IT& first, IT& last);
 op* any_expr(IT& first, IT& last);
 
 op* digit_expr(IT& first, IT& last);	//TODO
@@ -122,14 +123,12 @@ op* simple_re_expr(IT& first, IT& last) {
 	//If <basic-RE> did not enclose the whole expression
 	//Try for <concatenation>
 	if (first != last) {
-		std::cout << "Checking if concat" << std::endl;
 		first = start;
 		simple_re_child = concatenation_expr(first, last);
 	}
 
 	//If neither
 	if (!simple_re_child) {
-		std::cout << "Neither basic or concat" << std::endl;
 		first = start;
 		return nullptr;
 	}
@@ -229,11 +228,10 @@ op* elementary_re_expr(IT& first, IT& last) {
 		elementary_re_child = any_expr(first, last);
 	}
 
-	//TODO Check if <elementary-RE> is <group>
-	/*if (!elementary){ 
-		elementary = group_expr(first, last);
+	//Check if <elementary-RE> is <group>
+	if (!elementary_re_child){
+		elementary_re_child = group_expr(first, last);
 	}	
-	*/
 
 	//If failed to find elementary_re
 	if (!elementary_re_child) {
@@ -255,10 +253,10 @@ op* character_expr(IT& first, IT& last) {
 	character* expr = new character;
 
 	//If character is a non metacharacter, append the text to <character> node and check next character
-	while(char_token.id == token::ID) {
+	if(char_token.id == token::ID) {
 		expr->_id.append(char_token.text);
 		first++;
-		char_token = next_token(first, last);
+		//char_token = next_token(first, last);
 	}
 
 	//If we did not find any characters
@@ -269,9 +267,50 @@ op* character_expr(IT& first, IT& last) {
 	return expr;
 };
 
-//TODO
 op* group_expr(IT& first, IT& last) {
-	return nullptr;
+	//Save iterator pointing at first
+	IT start = first;
+
+	IT prev_end = last;
+	prev_end--;
+	IT end = last;
+
+	//Get token & return nullptr if not "("
+	token par_token = next_token(first, last);
+	if (par_token.id != token::LEFT_PARENTHESES) {
+		return nullptr;
+	}
+	first++;
+
+	while (first != end) {
+		par_token = next_token(prev_end, end);
+		if (par_token.id != token::RIGHT_PARENTHESES) {
+			end--;
+			prev_end--;
+		}
+		else {
+			end--;
+			break;
+		}
+	}
+
+	//Check if group contains valid regex
+	op* group_child = regExp(first, end);
+	if (!group_child) {
+		first = start;
+		return nullptr;
+	}
+
+	//Get token & return nullptr if not ")"
+	par_token = next_token(first, last);
+	if (par_token.id != token::RIGHT_PARENTHESES) {
+		return nullptr;
+	}
+	first++;
+
+	group* expr = new group;
+	expr->operands.push_back(group_child);
+	return expr;
 };
 
 
@@ -336,7 +375,7 @@ void execute(op* parse_tree, std::string source) {
 int main() {
 
 	std::string source = "Waterloo I was defeated, you won the war Waterloo promise to love you for ever more Waterloo couldn't escape if I wanted to Waterloo knowing my fate is to be with you Waterloo finally facing my Waterloo";
-	std::string input = "o.";
+	std::string input = "(o.o)";
 
 	//Get iterators to begin and end
 	IT begin = input.begin();

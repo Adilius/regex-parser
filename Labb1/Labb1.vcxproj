@@ -156,6 +156,7 @@
     <ClInclude Include="character.h" />
     <ClInclude Include="concatenation.h" />
     <ClInclude Include="elementary_re.h" />
+    <ClInclude Include="group.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="op.h" />
     <ClInclude Include="program.h" />

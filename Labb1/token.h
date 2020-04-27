@@ -11,7 +11,7 @@ struct token {
 		PLUS,
 		STAR,
 		ANY,
-		LEFT_PARANTHESES,
+		LEFT_PARENTHESES,
 		RIGHT_PARENTHESES,
 		LEFT_BRACKET,
 		RIGHT_BRACKET,
@@ -41,7 +41,7 @@ token next_token(IT& first, IT& last) {
 			tk = { token::ANY, "." };
 			break;
 		case '(':
-			tk = { token::LEFT_PARANTHESES, "(" };
+			tk = { token::LEFT_PARENTHESES, "(" };
 			break;
 		case ')':
 			tk = { token::RIGHT_PARENTHESES, ")" };

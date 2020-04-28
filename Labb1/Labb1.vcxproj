@@ -162,6 +162,7 @@
     <ClInclude Include="program.h" />
     <ClInclude Include="re.h" />
     <ClInclude Include="simple_re.h" />
+    <ClInclude Include="star.h" />
     <ClInclude Include="substitute.h" />
     <ClInclude Include="token.h" />
   </ItemGroup>

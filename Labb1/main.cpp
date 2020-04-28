@@ -11,6 +11,7 @@
 #include "program.h"
 #include "any.h"
 #include "group.h"
+#include "star.h"
 
 #include <iostream>
 #include <string>
@@ -169,16 +170,47 @@ op* basic_re_expr(IT& first, IT& last) {
 	//Save iterator pointing at first
 	IT start = first;
 
-	op* basic_re_child = nullptr;	//basic = star | count | lowercase | capturegroup | elementary_re
-	//if (!basic) { basic = star_expr(first, last); }			//TODO
-	//if (!basic) { basic = counter_expr(first, last); }		//TODO
-	//if (!basic) { basic = lowercase_expr(first, last); }		//TODO
-	//if (!basic) { basic = capturegroup_expr(first, last); }	//TODO
+	op* basic_re_child = nullptr;
 
 	//Check <basic-RE> is an <elementary-RE>
-	if (!basic_re_child){
+	if (!basic_re_child) {
+		std::cout << "Checking if <elementary-RE>" << std::endl;
 		basic_re_child = elementary_re_expr(first, last);
 	}
+
+	//Check if <elementary-RE> is followed by syntax
+	if (first != last) {
+		token syntax_token = next_token(first, last);
+
+		//Check <basic-RE> is an <star>
+		if (syntax_token.id == token::STAR) {
+			std::cout << "Syntax token is <star>" << std::endl;
+			first = start;
+			basic_re_child = star_expr(first, last);
+			first++;
+		}
+		if (syntax_token.id == token::LEFT_BRACKET) {
+			std::cout << "Syntax token is <count>" << std::endl;
+		}
+	}
+
+	//Check <basic-RE> is an <count>
+	if (!basic_re_child) {
+		std::cout << "Checking if <count>" << std::endl;
+		basic_re_child = counter_expr(first, last);
+	}
+
+	
+	//Check <basic-RE> is an <lowercase>	//TODO
+	/*if (!basic_re_child) {
+		basic_re_child = lowercase_expr(first, last);
+	}*/
+
+	//Check <basic-RE> is an <capturegroup>	//TODO
+	/*if (!basic_re_child) {
+		basic_re_child = capturegroup_expr(first, last);
+	}*/
+
 
 	//If failed to find basic-RE
 	if (!basic_re_child) {
@@ -191,9 +223,17 @@ op* basic_re_expr(IT& first, IT& last) {
 	return expr;
 }
 
-//TODO
 op* star_expr(IT& first, IT& last) {
-	return nullptr;
+	//Save iterator pointing at first
+	IT start = first;
+
+	op* star_child = nullptr;
+
+	star_child = elementary_re_expr(first, last);
+
+	star* expr = new star;
+	expr->operands.push_back(star_child);
+	return expr;
 }
 
 //TODO
@@ -375,7 +415,7 @@ void execute(op* parse_tree, std::string source) {
 int main() {
 
 	std::string source = "Waterloo I was defeated, you won the war Waterloo promise to love you for ever more Waterloo couldn't escape if I wanted to Waterloo knowing my fate is to be with you Waterloo finally facing my Waterloo";
-	std::string input = "(o.o)";
+	std::string input = "o*";
 
 	//Get iterators to begin and end
 	IT begin = input.begin();

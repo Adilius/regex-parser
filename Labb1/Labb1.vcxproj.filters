@@ -57,6 +57,9 @@
     <ClInclude Include="star.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="count.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

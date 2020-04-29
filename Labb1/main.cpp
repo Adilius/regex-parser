@@ -12,6 +12,7 @@
 #include "any.h"
 #include "group.h"
 #include "star.h"
+#include "count.h"
 
 #include <iostream>
 #include <string>
@@ -57,12 +58,12 @@ op* substitute_expr(IT& first, IT& last); //TODO
 op* simple_re_expr(IT& first, IT& last);
 
 //<simple-RE>         ::=     <concatenation> | <basic-RE>
-op* concatenation_expr(IT& first, IT& last);	//TODO
+op* concatenation_expr(IT& first, IT& last);
 op* basic_re_expr(IT& first, IT& last);
 
 //<basic-RE>          ::=     <star> | <count> | <lowercase> | <capturegroup> | <elementary-RE>
-op* star_expr(IT& first, IT& last);	//TODO
-op* counter_expr(IT& first, IT& last);	//TODO
+op* star_expr(IT& first, IT& last);
+op* count_expr(IT& first, IT& last);
 op* lowercase_expr(IT& first, IT& last);	//TODO
 op* capturegroup_expr(IT& first, IT& last);	//TODO
 op* elementary_re_expr(IT& first, IT& last);
@@ -71,8 +72,6 @@ op* elementary_re_expr(IT& first, IT& last);
 op* character_expr(IT& first, IT& last);
 op* group_expr(IT& first, IT& last);
 op* any_expr(IT& first, IT& last);
-
-op* digit_expr(IT& first, IT& last);	//TODO
 
 //Prints parse tree
 void print(op* op, size_t i = 0);
@@ -189,17 +188,14 @@ op* basic_re_expr(IT& first, IT& last) {
 			basic_re_child = star_expr(first, last);
 			first++;
 		}
+		//Check <basic-RE> is an <count>
 		if (syntax_token.id == token::LEFT_BRACKET) {
 			std::cout << "Syntax token is <count>" << std::endl;
+			first = start;
+			basic_re_child = count_expr(first, last);
+
 		}
 	}
-
-	//Check <basic-RE> is an <count>
-	if (!basic_re_child) {
-		std::cout << "Checking if <count>" << std::endl;
-		basic_re_child = counter_expr(first, last);
-	}
-
 	
 	//Check <basic-RE> is an <lowercase>	//TODO
 	/*if (!basic_re_child) {
@@ -228,7 +224,6 @@ op* star_expr(IT& first, IT& last) {
 	IT start = first;
 
 	op* star_child = nullptr;
-
 	star_child = elementary_re_expr(first, last);
 
 	star* expr = new star;
@@ -236,9 +231,37 @@ op* star_expr(IT& first, IT& last) {
 	return expr;
 }
 
-//TODO
-op* counter_expr(IT& first, IT& last) {
-	return nullptr;
+op* count_expr(IT& first, IT& last) {
+	//Save iterator pointing at first
+	IT start = first;
+
+	op* count_child = nullptr;
+	count_child = elementary_re_expr(first, last);
+
+	std::string counttext = "";
+
+	//Jump over first left bracket
+	first++;
+
+	token syntax_token = next_token(first, last);
+	while (syntax_token.id == token::ID) {
+		counttext.append(syntax_token.text);
+		std::cout << "Text captured: " << syntax_token.text << std::endl;
+		first++;
+		syntax_token = next_token(first, last);
+	}
+	if (syntax_token.id == token::RIGHT_BRACKET) {
+		std::cout << "Close <count> brackets" << std::endl;
+		first++;
+	}
+	else {
+		std::cout << "Could not close <count> " << std::endl;
+	}
+
+	count* expr = new count;
+	expr->countAmount = std::stoi(counttext);
+	expr->operands.push_back(count_child);
+	return expr;
 };
 
 //TODO
@@ -353,7 +376,6 @@ op* group_expr(IT& first, IT& last) {
 	return expr;
 };
 
-
 op* any_expr(IT& first, IT& last) {
 	//Get token
 	token any_token = next_token(first, last);
@@ -368,11 +390,6 @@ op* any_expr(IT& first, IT& last) {
 	//If token is not <any>
 	return nullptr;
 };
-
-//TODO
-op* digit_expr(IT& first, IT& last) {
-	return nullptr;
-}
 
 //Print parse tree
 void print(op* op, size_t i) {
@@ -415,7 +432,7 @@ void execute(op* parse_tree, std::string source) {
 int main() {
 
 	std::string source = "Waterloo I was defeated, you won the war Waterloo promise to love you for ever more Waterloo couldn't escape if I wanted to Waterloo knowing my fate is to be with you Waterloo finally facing my Waterloo";
-	std::string input = "o*";
+	std::string input = "a{33}abc.";
 
 	//Get iterators to begin and end
 	IT begin = input.begin();

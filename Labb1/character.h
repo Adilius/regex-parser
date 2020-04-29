@@ -9,25 +9,18 @@ struct character : op {
 	std::string _id; //Identifier
 
 	object* eval(object* obj) override {
-
-		if (obj->lowercase){
-			std::transform(_id.begin(), _id.end(), _id.begin(), ::tolower);
-		
+		//Check if we reached end of string
+		if (obj->rhs == obj->end) {
+			return nullptr;
 		}
 
-		//Check characters
-		for (size_t i = 0; i < _id.size(); i++) {
-			//Check if we reached end of string
-			if (obj->rhs + i == obj->end) {
-				return nullptr;
-			}
-
-			//If not match
-			if ( *(obj->rhs + i) != *(_id.begin() + i) ) {
-				return nullptr;
-			}
+		//If not match
+		if (*obj->rhs != *_id.begin()) {
+			return nullptr;
 		}
-		obj->cap.push_back({ obj->rhs , obj->rhs += _id.size() });
+
+		//Match, return character
+		obj->cap.push_back({ obj->rhs , obj->rhs++ });
 		return obj;
 
 	}

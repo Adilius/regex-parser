@@ -15,7 +15,6 @@ struct object {
 	IT lhs;
 	IT rhs;
 	IT end;
-	bool lowercase = false;
 	size_t captured = 0;
 	std::vector<iter> cap;
 };

@@ -173,7 +173,6 @@ op* basic_re_expr(IT& first, IT& last) {
 
 	//Check <basic-RE> is an <elementary-RE>
 	if (!basic_re_child) {
-		std::cout << "Checking if <elementary-RE>" << std::endl;
 		basic_re_child = elementary_re_expr(first, last);
 	}
 
@@ -183,14 +182,12 @@ op* basic_re_expr(IT& first, IT& last) {
 
 		//Check <basic-RE> is an <star>
 		if (syntax_token.id == token::STAR) {
-			std::cout << "Syntax token is <star>" << std::endl;
 			first = start;
 			basic_re_child = star_expr(first, last);
 			first++;
 		}
 		//Check <basic-RE> is an <count>
 		if (syntax_token.id == token::LEFT_BRACKET) {
-			std::cout << "Syntax token is <count>" << std::endl;
 			first = start;
 			basic_re_child = count_expr(first, last);
 
@@ -238,6 +235,7 @@ op* count_expr(IT& first, IT& last) {
 	op* count_child = nullptr;
 	count_child = elementary_re_expr(first, last);
 
+	//Save digits in <count> {"123123"}
 	std::string counttext = "";
 
 	//Jump over first left bracket
@@ -246,16 +244,15 @@ op* count_expr(IT& first, IT& last) {
 	token syntax_token = next_token(first, last);
 	while (syntax_token.id == token::ID) {
 		counttext.append(syntax_token.text);
-		std::cout << "Text captured: " << syntax_token.text << std::endl;
 		first++;
 		syntax_token = next_token(first, last);
 	}
 	if (syntax_token.id == token::RIGHT_BRACKET) {
-		std::cout << "Close <count> brackets" << std::endl;
 		first++;
 	}
 	else {
 		std::cout << "Could not close <count> " << std::endl;
+		return nullptr;
 	}
 
 	count* expr = new count;
@@ -375,7 +372,6 @@ op* group_expr(IT& first, IT& last) {
 	expr->operands.push_back(group_child);
 	return expr;
 };
-
 op* any_expr(IT& first, IT& last) {
 	//Get token
 	token any_token = next_token(first, last);
@@ -401,7 +397,9 @@ void print(op* op, size_t i) {
 	}
 
 	//Print class name
-	std::cout << op->id() << " " << op->operands.size() << std::endl;
+	std::cout << op->id() << " ";
+	//std::cout << op->operands.size();
+	std::cout << std::endl;
 
 	//Iterate into class operands
 	for (size_t childNode = 0; childNode < op->operands.size(); childNode++) {
@@ -419,8 +417,9 @@ void execute(op* parse_tree, std::string source) {
 	object* parse = parse_tree->eval(obj);
 
 	if (parse != nullptr) {
-		for (; parse->lhs != parse->rhs; parse->lhs++) {
+		while (parse->lhs != parse->rhs) {
 			std::cout << *parse->lhs;
+			parse->lhs++;
 		}
 	}
 	else {
@@ -432,7 +431,7 @@ void execute(op* parse_tree, std::string source) {
 int main() {
 
 	std::string source = "Waterloo I was defeated, you won the war Waterloo promise to love you for ever more Waterloo couldn't escape if I wanted to Waterloo knowing my fate is to be with you Waterloo finally facing my Waterloo";
-	std::string input = "a{33}abc.";
+	std::string input = ".aterlo{2}";
 
 	//Get iterators to begin and end
 	IT begin = input.begin();
@@ -450,10 +449,8 @@ int main() {
 	print(result);
 	std::cout << std::endl;
 
-	/*
+	
 	std::cout << "Result of executed regex:" << std::endl;
 	execute(result, source);
 	std::cout << std::endl;
-	*/
-	
 }

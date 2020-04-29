@@ -12,6 +12,7 @@ struct count : op {
 		while (countAmount > 0) {
 			temp = operands[0]->eval(obj);
 			if (!temp) {
+				//obj->rhs-countAmount;
 				return nullptr;
 			}
 			countAmount--;

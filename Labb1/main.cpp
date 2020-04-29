@@ -431,7 +431,7 @@ void execute(op* parse_tree, std::string source) {
 int main() {
 
 	std::string source = "Waterloo I was defeated, you won the war Waterloo promise to love you for ever more Waterloo couldn't escape if I wanted to Waterloo knowing my fate is to be with you Waterloo finally facing my Waterloo";
-	std::string input = ".aterlo{2}";
+	std::string input = "aterlo.{1} knowing";
 
 	//Get iterators to begin and end
 	IT begin = input.begin();

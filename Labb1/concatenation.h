@@ -8,6 +8,7 @@ using IT = std::string::iterator;
 
 struct concatenation : op {
 	object* eval(object* obj) override {
+		//Save pointer at start of <concatenation>
 		IT obj_begin = obj->lhs;
 		obj->lhs = obj->rhs;
 		object* basic = operands[0]->eval(obj);
@@ -21,15 +22,19 @@ struct concatenation : op {
 		IT basic_begin = basic->lhs;
 		basic->lhs = basic->rhs;
 		object* simple = operands[1]->eval(basic);
+
 		bool backtrack = false;
 
-
-		for (; basic_begin != basic->rhs && !simple; --basic->rhs, --basic->lhs) {
+		//If <basic-RE> returned nullptr
+		while(basic->rhs != basic_begin  && !simple) {
 			backtrack = true;
 			if (basic_begin == basic->rhs) {
 				return nullptr;
 			}
 			simple = operands[1]->eval(basic);
+
+			basic->rhs--;
+			//basic->lhs--;
 		}
 
 		if (simple) {

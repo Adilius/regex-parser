@@ -5,19 +5,27 @@
 
 struct count : op {
 	int countAmount = 0;		//Count amount
+	int countAmountTemp = 0;	//Used in function
 
 	object* eval(object* obj) override {
-		object* temp = nullptr;
+		countAmountTemp = countAmount;
+		object save = *obj;	//Object saved for when <count> fails
+		object* temp = obj;
 
-		while (countAmount > 0) {
+		while (countAmountTemp > 0) {
 			temp = operands[0]->eval(obj);
-			if (!temp) {
-				//obj->rhs-countAmount;
+			//std::cout << "I am iterating: " << countAmountTemp << " Current lhs: " << std::endl;
+
+			if (temp == nullptr) {
+				*obj = save;
 				return nullptr;
 			}
-			countAmount--;
+
+			countAmountTemp--;
 		}
-		return temp;
+		//(std::cout << "I am returning" << std::endl;
+		obj = temp;
+		return obj;
 	}
 
 	std::string id() override {

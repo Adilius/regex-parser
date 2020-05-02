@@ -414,7 +414,7 @@ void execute(op* parse_tree, std::string source) {
 	object* parse = parse_tree->eval(obj);
 
 	if (parse != nullptr) {
-		while (parse->lhs != parse->end) {
+		while (parse->lhs != parse->rhs) {
 			std::cout << *parse->lhs;
 			parse->lhs++;
 		}
@@ -427,8 +427,8 @@ void execute(op* parse_tree, std::string source) {
 
 int main() {
 
-	std::string source = "Waterloo";
-	std::string input = ".*";
+	std::string source = "Waterloo I was defeated, you won the war Waterloo promise to love you for ever more Waterloo couldn't escape if I wanted to Waterloo knowing my fate is to be with you Waterloo finally facing my Waterloo";
+	std::string input = "ater";
 
 	//Get iterators to begin and end
 	IT begin = input.begin();

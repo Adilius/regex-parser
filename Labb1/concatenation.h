@@ -2,7 +2,6 @@
 #define CONCATENATION_H
 
 #include "op.h"
-#include "object.h"
 
 using IT = std::string::iterator;
 

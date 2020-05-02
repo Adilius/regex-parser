@@ -2,7 +2,6 @@
 #define RE_H
 
 #include "op.h"
-#include "object.h"
 
 struct re : op {
 

@@ -2,7 +2,6 @@
 #define BASIC_RE_H
 
 #include "op.h"
-#include "object.h"
 
 struct basic_re : op {
 	object* eval(object* obj) override {

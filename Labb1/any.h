@@ -2,7 +2,6 @@
 #define ANY_H
 
 #include "op.h"
-#include "object.h"
 
 struct any : op {
 	object* eval(object* obj) override{

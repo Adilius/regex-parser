@@ -2,7 +2,6 @@
 #define PROGRAM_H
 
 #include "op.h"
-#include "object.h"
 
 struct program : op {
 	object* eval(object* obj) override {

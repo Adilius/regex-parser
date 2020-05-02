@@ -21,7 +21,6 @@ struct character : op {
 
 		//Match, return character
 		obj->rhs++;
-		//obj->cap.push_back({ obj->rhs , obj->rhs++ });
 		return obj;
 
 	}

@@ -2,7 +2,6 @@
 #include "token.h"
 #include "object.h"
 #include "re.h"
-#include "substitute.h"
 #include "concatenation.h"
 #include "simple_re.h"
 #include "basic_re.h"
@@ -85,23 +84,25 @@ op* program_parse(IT& first, IT& last) {
 		return nullptr;
 	}
 	program* expr = new program;
-	op* re = regExp(first, last);
-	expr->operands.push_back(re);
+	op* program_parse_child = regExp(first, last);
+	expr->operands.push_back(program_parse_child);
 	return expr;
 }
 
 op* regExp(IT& first, IT& last) {
+	//Create empty child node
+	op* regExp_child = nullptr;
+
 	//TODO substitute rule
 	//op* substitute_or_simple = substitute_expr(first, last);
-	op* substitute_or_simple = NULL;
 
-	//Check if substitute or simple
-	if (!substitute_or_simple) {
-		substitute_or_simple = simple_re_expr(first, last);
+	//Check if <simple-RE>
+	if (!regExp_child) {
+		regExp_child = simple_re_expr(first, last);
 	}
 
 	re* expr = new re;
-	expr->operands.push_back(substitute_or_simple);
+	expr->operands.push_back(regExp_child);
 	return expr;
 }
 
@@ -169,6 +170,7 @@ op* basic_re_expr(IT& first, IT& last) {
 	//Save iterator pointing at first
 	IT start = first;
 
+	//Create empty child node
 	op* basic_re_child = nullptr;
 
 	//Check <basic-RE> is an <elementary-RE>
@@ -406,47 +408,58 @@ void print(op* op, size_t i) {
 
 //Executes parse tree
 void execute(op* parse_tree, std::string source) {
+	//Create new object of source string
 	object* obj = new object;
 	obj->lhs = source.begin();
 	obj->rhs = source.begin();
 	obj->end = source.end();
 
+	//Evaluate parse tree on source string
 	object* parse = parse_tree->eval(obj);
 
+	//If we got a valid parse, print it
 	if (parse != nullptr) {
 		while (parse->lhs != parse->rhs) {
 			std::cout << *parse->lhs;
 			parse->lhs++;
 		}
+		std::cout << std::endl << "EXIT_SUCCESS" << std::endl;
 	}
 	else {
-		std::cerr << "EXIT FAILURE." << std::endl;
+		std::cerr << std::endl << "EXIT_FAILURE" << std::endl;
 	}
 }
 
 
 int main() {
 
-	std::string source = "Waterloo I was defeated, you won the war Waterloo promise to love you for ever more Waterloo couldn't escape if I wanted to Waterloo knowing my fate is to be with you Waterloo finally facing my Waterloo";
-	std::string input = "ater";
+	//Placeholder, TODO make into input
+	std::string text = "Waterloo I was defeated, you won the war Waterloo promise to love you for ever more Waterloo couldn't escape if I wanted to Waterloo knowing my fate is to be with you Waterloo finally facing my Waterloo";
+	std::string input = ".*";
 
-	//Get iterators to begin and end
+	//Get iterators to begin and end of text
 	IT begin = input.begin();
 	IT end = input.end();
 
+	//Create parse tree
 	op* result = program_parse(begin, end);
 
-	std::cout << "Source string:" << std::endl;
-	std::cout << source << std::endl << std::endl;
 
+	//Print text
+	std::cout << "Text string:" << std::endl;
+	std::cout << text << std::endl << std::endl;
+
+	//Print regex
 	std::cout << "Regular Expression:" << std::endl;
 	std::cout << input << std::endl << std::endl;
 
+	//Print regex tree
 	std::cout << "Print parse tree:" << std::endl;
 	print(result);
 	std::cout << std::endl;
 
+	//Print result of regex tree on text
 	std::cout << "Result of executed regex:" << std::endl;
-	execute(result, source);
+	execute(result, text);
 	std::cout << std::endl;
 }

@@ -2,7 +2,6 @@
 #define ELEMENTARY_RE_H
 
 #include "op.h"
-#include "object.h"
 
 struct elementary_re : op {
 	object* eval(object* obj) override {

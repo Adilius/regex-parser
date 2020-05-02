@@ -27,9 +27,6 @@
     <ClInclude Include="re.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="substitute.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="concatenation.h">
       <Filter>Header Files</Filter>
     </ClInclude>

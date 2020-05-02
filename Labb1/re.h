@@ -4,20 +4,10 @@
 #include "op.h"
 #include "object.h"
 
-//<RE>		::=		<substitute>	|	<simple-RE>
 struct re : op {
 
 	object* eval(object* obj) override{
-		obj = operands[0]->eval(obj);
-		/*
-		if (obj) {
-			if (obj->captured >= 1) {
-				std::cout << "Captured is 1 or more" << std::endl;
-				obj->lhs = obj->cap[obj->captured].lhs;
-				obj->rhs = obj->cap[obj->captured].rhs;
-			}
-		}*/
-		return obj;
+		return operands[0]->eval(obj);
 	}
 
 	std::string id() override {

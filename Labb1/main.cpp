@@ -261,11 +261,10 @@ op* count_expr(IT& first, IT& last) {
 	return expr;
 };
 
-//TODO
+//TODO 
 op* lowercase_expr(IT& first, IT& last) {
 	return nullptr;
 };
-
 //TODO
 op* capturegroup_expr(IT& first, IT& last) {
 	return nullptr;
@@ -303,7 +302,6 @@ op* elementary_re_expr(IT& first, IT& last) {
 	expr->operands.push_back(elementary_re_child);
 	return expr;
 };
-
 op* character_expr(IT& first, IT& last) {
 	//Save iterator pointing at first
 	IT start = first;
@@ -326,7 +324,6 @@ op* character_expr(IT& first, IT& last) {
 
 	return expr;
 };
-
 op* group_expr(IT& first, IT& last) {
 	//Save iterator pointing at first
 	IT start = first;
@@ -417,7 +414,7 @@ void execute(op* parse_tree, std::string source) {
 	object* parse = parse_tree->eval(obj);
 
 	if (parse != nullptr) {
-		while (parse->lhs != parse->rhs) {
+		while (parse->lhs != parse->end) {
 			std::cout << *parse->lhs;
 			parse->lhs++;
 		}
@@ -430,8 +427,8 @@ void execute(op* parse_tree, std::string source) {
 
 int main() {
 
-	std::string source = "Waterloo I was";
-	std::string input = "lo{3}";
+	std::string source = "Waterloo";
+	std::string input = ".*";
 
 	//Get iterators to begin and end
 	IT begin = input.begin();
@@ -449,7 +446,6 @@ int main() {
 	print(result);
 	std::cout << std::endl;
 
-	
 	std::cout << "Result of executed regex:" << std::endl;
 	execute(result, source);
 	std::cout << std::endl;

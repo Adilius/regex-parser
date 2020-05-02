@@ -15,23 +15,21 @@
 
 #include <iostream>
 #include <string>
+#include <fstream>	//To read file
+#include <streambuf>	//To read file
 
 //https://stackoverflow.com/questions/265457/regex-grammar
 /* BNF Grammar of Regular Expressions
 <program_parse>     ::=     <RE>
-<RE>                ::=     <substitute> | <simple-RE>
-<substitute>        ::=     <simple-RE> "+" <RE>
+<RE>                ::=     <simple-RE>
 <simple-RE>         ::=     <concatenation> | <basic-RE>
 <concatenation>     ::=     <basic-RE> <simple-RE>
-<basic-RE>          ::=     <star> | <count> | <lowercase> | <capturegroup> | <elementary-RE>
+<basic-RE>          ::=     <star> | <count> | <elementary-RE>
 <elementary-RE>     ::=     <character> | <group> | <any>
 <star>              ::=     <elementary-RE> "*"
-<lowercase>         ::=     <elementary-RE> \I
-<capturegroup>      ::=     <elementary-RE> \O <count>
-<count>             ::=     <elementary-RE> "{" <digit> "}"
-<character>         ::=     any non metacharacter | "\" metacharacter
+<count>             ::=     <elementary-RE> "{" digits "}"
+<character>         ::=     any non metacharacter
 <group>             ::=     "(" <RE> ")"
-<digit>             ::=     "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
 <any>               ::=     "."
 */
 
@@ -41,33 +39,19 @@
 () infångningsgrupp, deluttryck. Uttrycket parsas separat. Syntax: (EXPR)
 . tecken. matchar varlfritt tecken. Syntax: .
 {} räknare. matchar precis N stycken operander. Syntax: OP{3}
-\I ignorera versalisering. Syntax EXPR\I
-\O{} vilken infångningsgrupp som ska ges som output. Syntax: EXPR\O{2}. Default \O{0} hela matchningen.
 */
 
 using IT = std::string::iterator;
 
+//Functions to create regex tree
 op* program_parse(IT& first, IT& last);
-
-//<program_parse>     ::=     <RE>
 op* regExp(IT& first, IT& last);
-
-//<RE>                ::=     <substitute> | <simple-RE>
-op* substitute_expr(IT& first, IT& last); //TODO
 op* simple_re_expr(IT& first, IT& last);
-
-//<simple-RE>         ::=     <concatenation> | <basic-RE>
 op* concatenation_expr(IT& first, IT& last);
 op* basic_re_expr(IT& first, IT& last);
-
-//<basic-RE>          ::=     <star> | <count> | <lowercase> | <capturegroup> | <elementary-RE>
 op* star_expr(IT& first, IT& last);
 op* count_expr(IT& first, IT& last);
-op* lowercase_expr(IT& first, IT& last);	//TODO
-op* capturegroup_expr(IT& first, IT& last);	//TODO
 op* elementary_re_expr(IT& first, IT& last);
-
-//<elementary-RE>     ::=     <character> | <group> | <any>
 op* character_expr(IT& first, IT& last);
 op* group_expr(IT& first, IT& last);
 op* any_expr(IT& first, IT& last);
@@ -88,7 +72,6 @@ op* program_parse(IT& first, IT& last) {
 	expr->operands.push_back(program_parse_child);
 	return expr;
 }
-
 op* regExp(IT& first, IT& last) {
 	//Create empty child node
 	op* regExp_child = nullptr;
@@ -105,12 +88,6 @@ op* regExp(IT& first, IT& last) {
 	expr->operands.push_back(regExp_child);
 	return expr;
 }
-
-//TODO
-op* substitute_expr(IT& first, IT& last) {
-	return nullptr;
-}
-
 op* simple_re_expr(IT& first, IT& last) {
 	//Save iterator pointing at first
 	IT start = first;
@@ -138,7 +115,6 @@ op* simple_re_expr(IT& first, IT& last) {
 	expr->operands.push_back(simple_re_child);
 	return expr;
 }
-
 op* concatenation_expr(IT& first, IT& last) {
 	//Save iterator pointing at first
 	IT start = first;
@@ -165,7 +141,6 @@ op* concatenation_expr(IT& first, IT& last) {
 	expr->operands.push_back(simple_re_op);
 	return expr;
 }
-
 op* basic_re_expr(IT& first, IT& last) {
 	//Save iterator pointing at first
 	IT start = first;
@@ -217,7 +192,6 @@ op* basic_re_expr(IT& first, IT& last) {
 	expr->operands.push_back(basic_re_child);
 	return expr;
 }
-
 op* star_expr(IT& first, IT& last) {
 	//Save iterator pointing at first
 	IT start = first;
@@ -229,7 +203,6 @@ op* star_expr(IT& first, IT& last) {
 	expr->operands.push_back(star_child);
 	return expr;
 }
-
 op* count_expr(IT& first, IT& last) {
 	//Save iterator pointing at first
 	IT start = first;
@@ -262,16 +235,6 @@ op* count_expr(IT& first, IT& last) {
 	expr->operands.push_back(count_child);
 	return expr;
 };
-
-//TODO 
-op* lowercase_expr(IT& first, IT& last) {
-	return nullptr;
-};
-//TODO
-op* capturegroup_expr(IT& first, IT& last) {
-	return nullptr;
-};
-
 op* elementary_re_expr(IT& first, IT& last) {
 	//Save iterator pointing at first
 	IT start = first;
@@ -431,11 +394,23 @@ void execute(op* parse_tree, std::string source) {
 }
 
 
-int main() {
+int main(int argc, char* argv[]) {
 
-	//Placeholder, TODO make into input
+	//Standards incase no command line arguments
 	std::string text = "Waterloo I was defeated, you won the war Waterloo promise to love you for ever more Waterloo couldn't escape if I wanted to Waterloo knowing my fate is to be with you Waterloo finally facing my Waterloo";
 	std::string input = ".*";
+
+	//If we get a regex
+	if (argc > 1) {
+		input = argv[1];
+	}
+
+	//If we get a text
+	if (argc > 2) {
+		std::string fileName = argv[2];
+		std::ifstream f(fileName);
+		text.assign((std::istreambuf_iterator<char>(f)), (std::istreambuf_iterator<char>()));
+	}
 
 	//Get iterators to begin and end of text
 	IT begin = input.begin();

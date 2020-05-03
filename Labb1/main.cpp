@@ -419,7 +419,7 @@ int main(int argc, char* argv[]) {
 	//Create parse tree
 	op* result = program_parse(begin, end);
 
-
+	/*
 	//Print text
 	std::cout << "Text string:" << std::endl;
 	std::cout << text << std::endl << std::endl;
@@ -432,7 +432,7 @@ int main(int argc, char* argv[]) {
 	std::cout << "Print parse tree:" << std::endl;
 	print(result);
 	std::cout << std::endl;
-
+	*/
 	//Print result of regex tree on text
 	std::cout << "Result of executed regex:" << std::endl;
 	execute(result, text);

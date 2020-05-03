@@ -17,3 +17,4 @@ Regular expression parser written in C++ for school project
 ## Output
 ![output1](https://user-images.githubusercontent.com/43440295/80920120-064f4a00-8d6e-11ea-8e64-ca49e4631904.PNG)
 ![output2](https://user-images.githubusercontent.com/43440295/80920171-5a5a2e80-8d6e-11ea-8738-aee6b5827a95.PNG)
+![output3](https://user-images.githubusercontent.com/43440295/80920296-20d5f300-8d6f-11ea-8068-083c6bf3264d.PNG)

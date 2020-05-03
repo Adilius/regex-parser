@@ -10,14 +10,16 @@ struct concatenation : op {
 		//Save pointer at start of <concatenation>
 		IT obj_begin = obj->lhs;
 		obj->lhs = obj->rhs;
+
+		//Evaluate first operand
 		object* basic = operands[0]->eval(obj);
 
-		//If first operand is not basic-RE, return nullptr
+		//If first operand is not <basic-RE> then return nullptr
 		if (!basic) {
 			return nullptr;
 		}
 
-		//Proceed with basic-RE
+		//Proceed with <simple-RE>
 		IT basic_begin = basic->lhs;
 		basic->lhs = basic->rhs;
 		object* simple = operands[1]->eval(basic);
@@ -36,6 +38,7 @@ struct concatenation : op {
 			//basic->lhs--;
 		}
 
+		//If <basic-RE>
 		if (simple) {
 			if (backtrack) {
 				simple->cap.push_back({ basic_begin, basic->rhs + 1 });

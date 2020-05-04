@@ -170,17 +170,6 @@ op* basic_re_expr(IT& first, IT& last) {
 
 		}
 	}
-	
-	//Check <basic-RE> is an <lowercase>	//TODO
-	/*if (!basic_re_child) {
-		basic_re_child = lowercase_expr(first, last);
-	}*/
-
-	//Check <basic-RE> is an <capturegroup>	//TODO
-	/*if (!basic_re_child) {
-		basic_re_child = capturegroup_expr(first, last);
-	}*/
-
 
 	//If failed to find basic-RE
 	if (!basic_re_child) {
@@ -397,8 +386,8 @@ void execute(op* parse_tree, std::string source) {
 int main(int argc, char* argv[]) {
 
 	//Standards incase no command line arguments
-	std::string text = "Waterloo I was defeated, you won the war Waterloo promise to love you for ever more Waterloo couldn't escape if I wanted to Waterloo knowing my fate is to be with you Waterloo finally facing my Waterloo";
-	std::string input = ".*";
+	std::string text = "bobllate";
+	std::string input = "ol.{2}";
 
 	//If we get a regex
 	if (argc > 1) {
@@ -418,7 +407,6 @@ int main(int argc, char* argv[]) {
 
 	//Create parse tree
 	op* result = program_parse(begin, end);
-
 	
 	//Print text
 	std::cout << "Text string:" << std::endl;

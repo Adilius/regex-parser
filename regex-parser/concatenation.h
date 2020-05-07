@@ -16,6 +16,7 @@ struct concatenation : op {
 
 		//If <basic-RE> failed, return nullptr
 		if (!basic_re) {
+			obj->lhs = obj->rhs = basic_begin;	//Reset iterators
 			return nullptr;
 		}
 
@@ -28,6 +29,7 @@ struct concatenation : op {
 
 		//If <simple-RE> failed, return nullptr
 		if (!simple_re) {
+			obj->lhs = obj->rhs = basic_begin;	//Reset iterators
 			return nullptr;
 		}
 

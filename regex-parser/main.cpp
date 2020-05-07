@@ -268,7 +268,6 @@ op* character_expr(IT& first, IT& last) {
 	if(char_token.id == token::ID) {
 		expr->_id.append(char_token.text);
 		first++;
-		//char_token = next_token(first, last);
 	}
 
 	//If we did not find any characters
@@ -375,9 +374,11 @@ void execute(op* parse_tree, std::string source) {
 			std::cout << *parse->lhs;
 			parse->lhs++;
 		}
+		std::cout << std::endl;
 		std::cout << std::endl << "EXIT_SUCCESS" << std::endl;
 	}
 	else {
+		std::cout << std::endl;
 		std::cerr << std::endl << "EXIT_FAILURE" << std::endl;
 	}
 }
@@ -386,8 +387,8 @@ void execute(op* parse_tree, std::string source) {
 int main(int argc, char* argv[]) {
 
 	//Standards incase no command line arguments
-	std::string text = "bobllate";
-	std::string input = "ol.{2}";
+	std::string text = "Waterloo I was defeated, you won the war Waterloo promise to love you for ever more Waterloo couldn't escape if I wanted to Waterloo knowing my fate is to be with you Waterloo finally facing my Waterloo";
+	std::string input = ".*";
 
 	//If we get a regex
 	if (argc > 1) {
@@ -417,7 +418,7 @@ int main(int argc, char* argv[]) {
 	std::cout << input << std::endl << std::endl;
 
 	//Print regex tree
-	std::cout << "Print parse tree:" << std::endl;
+	std::cout << "Parse tree:" << std::endl;
 	print(result);
 	std::cout << std::endl;
 	
